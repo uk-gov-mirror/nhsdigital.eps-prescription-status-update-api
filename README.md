@@ -13,14 +13,20 @@ Deployment history can be found at https://nhsdigital.github.io/eps-prescription
 
 This is the AWS layer that provides an API for EPS Prescription Status Update.
 
-- `packages/updatePrescriptionStatus/` Handles updating prescription status for the root endpoint.
+- `packages/updatePrescriptionStatus` Handles updating prescription status for the root endpoint.
 - `packages/nhsd-psu-sandbox` A sandbox endpoint returning an example response.
-- `packages/specification/` This [Open API Specification](https://swagger.io/docs/specification/about/) describes the endpoints, methods and messages.
-- `packages/statusLambda/` Returns the status of the updatePrescriptionStatus endpoint
-- `packages/capabilityStatement/` Returns a static capability statement.
+- `packages/specification` This [Open API Specification](https://swagger.io/docs/specification/about/) describes the endpoints, methods and messages.
+- `packages/statusLambda` Returns the status of the updatePrescriptionStatus endpoint.
+- `packages/capabilityStatement` Returns a static capability statement.
 - `packages/cpsuLambda` Handles updating prescription status using a custom format.
 - `packages/nhsNotifyLambda` Handles sending prescription notifications to the NHS notify service.
 - `packages/nhsNotifyUpdateCallback` Handles receiving notification updates from the NHS notify service.
+- `packages/checkPrescriptionStatusUpdates` Validates and retrieves prescription status update data.
+- `packages/gsul` Expose data owned by PSU but needed by [PfP](https://github.com/NHSDigital/prescriptionsforpatients)
+- `packages/psuRestoreValidationLambda` Lambda function that validates prescription status update restore operations.
+- `packages/common/commonTypes` Common TypeScript type definitions and interfaces.
+- `packages/common/middyErrorHandler` Middleware for handling errors in Lambda functions using Middy.
+- `packages/common/testing` Shared testing utilities and resources.
 - `scripts/` Utilities helpful to developers of this specification.
 - `postman/` Postman collections to call the APIs. Documentation on how to use them are in the collections.
 - `SAMtemplates/` Contains the SAM templates used to define the stacks.

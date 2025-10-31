@@ -21,7 +21,7 @@
     "@middy/core": "^6.4.5",
     "@middy/http-header-normalizer": "^6.4.5",
     "@middy/input-output-logger": "^6.4.5",
-    "@middy/validator": "6.4.1",
+    "@middy/validator": "6.4.5",
     "json-schema-to-ts": "^3.1.1",
     "pratica": "^2.3.0",
     "ts-md5": "^2.0.1",

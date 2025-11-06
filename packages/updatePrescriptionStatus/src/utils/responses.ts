@@ -33,6 +33,26 @@ export function badRequest(diagnostics: string, fullUrl: string | undefined = un
   return bundleEntry
 }
 
+export function tooManyRequests(): BundleEntry {
+  return {
+    response: {
+      status: "429 Too Many Requests",
+      outcome: {
+        resourceType: "OperationOutcome",
+        meta: {
+          lastUpdated: new Date().toISOString()
+        },
+        issue: [
+          {
+            code: "temporarily-forbidden",
+            severity: "error"
+          }
+        ]
+      }
+    }
+  }
+}
+
 export function timeoutResponse(): BundleEntry {
   return {
     response: {

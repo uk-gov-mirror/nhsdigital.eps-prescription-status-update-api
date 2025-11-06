@@ -155,6 +155,7 @@ test: compile
 	npm run test --workspace packages/nhsNotifyUpdateCallback
 	npm run test --workspace packages/common/middyErrorHandler
 	npm run test --workspace packages/psuRestoreValidationLambda
+	npm run test --workspace packages/common/utilities
 
 clean:
 	rm -rf packages/updatePrescriptionStatus/coverage

@@ -213,3 +213,17 @@ export function createMockDataItem(overrides: Partial<PSUDataItem>): PSUDataItem
     ...overrides
   }
 }
+
+// Mock implementation for getTestPrescriptions and desired returns for input parameters
+const mockPrescriptions = new Map([
+  ["TEST_PRESCRIPTIONS_PARAM_1", [TASK_VALUES[1].prescriptionID]],
+  ["TEST_PRESCRIPTIONS_PARAM_2", [TASK_VALUES[3].prescriptionID]],
+  ["TEST_PRESCRIPTIONS_PARAM_3", [TASK_VALUES[2].prescriptionID]],
+  ["TEST_PRESCRIPTIONS_PARAM_4", [TASK_VALUES[0].prescriptionID]]
+])
+
+export const getTestPrescriptions = jest.fn()
+  .mockName("getTestPrescriptions")
+  .mockImplementation((param: unknown) => {
+    return Promise.resolve(mockPrescriptions.get(param as string) || [])
+  })

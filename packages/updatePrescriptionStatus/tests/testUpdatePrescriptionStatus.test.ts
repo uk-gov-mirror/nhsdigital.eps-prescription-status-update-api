@@ -13,13 +13,28 @@ import {
   DEFAULT_DATE,
   X_REQUEST_ID,
   mockInternalDependency,
-  validTask
+  validTask,
+  getTestPrescriptions
 } from "./utils/testUtils"
 import {APIGatewayProxyEvent} from "aws-lambda"
 
 import * as content from "../src/validation/content"
 import {TransactionCanceledException} from "@aws-sdk/client-dynamodb"
 const mockValidateEntry = mockInternalDependency("../../src/validation/content", content, "validateEntry")
+
+const mockGetParametersByName = jest.fn(async () => Promise.resolve(
+  {[process.env.ENABLE_NOTIFICATIONS_PARAM!]: "false"}
+))
+
+const mockInitiatedSSMProvider = {
+  getParametersByName: mockGetParametersByName
+}
+
+jest.unstable_mockModule("@psu-common/utilities", async () => ({
+  getTestPrescriptions: getTestPrescriptions,
+  initiatedSSMProvider: mockInitiatedSSMProvider
+}))
+
 const {castEventBody, getXRequestID, validateEntries, handleTransactionCancelledException, buildDataItems, TTL_DELTA} =
   await import("../src/updatePrescriptionStatus")
 

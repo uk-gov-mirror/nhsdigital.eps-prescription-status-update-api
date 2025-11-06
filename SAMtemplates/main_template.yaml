@@ -137,25 +137,24 @@ Parameters:
       - true
       - false
 
+  TestPresciptionsParamValue1:
+    Type: String
+
+  TestPresciptionsParamValue2:
+    Type: String
+
+  TestPresciptionsParamValue3:
+    Type: String
+
+  TestPresciptionsParamValue4:
+    Type: String
+
   ForwardCsocLogs:
     Type: String
     Default: false
     AllowedValues:
       - true
       - false
-
-  TestPrescriptionsValue1:
-    Type: String
-
-  TestPrescriptionsValue2:
-    Type: String
-
-  TestPrescriptionsValue3:
-    Type: String
-
-  TestPrescriptionsValue4:
-    Type: String
-
 Resources:
   Secrets:
     Type: AWS::Serverless::Application
@@ -177,6 +176,10 @@ Resources:
         BlockedSiteODSCodesValue: !Ref BlockedSiteODSCodesValue
         NotifyRoutingPlanIDValue: !Ref NotifyRoutingPlanIDValue
         NotifyAPIBaseURLValue: !Ref NotifyAPIBaseURLValue
+        TestPresciptionsParamValue1: !Ref TestPresciptionsParamValue1
+        TestPresciptionsParamValue2: !Ref TestPresciptionsParamValue2
+        TestPresciptionsParamValue3: !Ref TestPresciptionsParamValue3
+        TestPresciptionsParamValue4: !Ref TestPresciptionsParamValue4
 
   Tables:
     Type: AWS::Serverless::Application
@@ -245,10 +248,10 @@ Resources:
         Environment: !Ref Environment
         EnableBackup: !Ref EnableBackup
         RequireApplicationName: !Ref RequireApplicationName
-        TestPrescriptions1: !Ref TestPrescriptionsValue1
-        TestPrescriptions2: !Ref TestPrescriptionsValue2
-        TestPrescriptions3: !Ref TestPrescriptionsValue3
-        TestPrescriptions4: !Ref TestPrescriptionsValue4
+        TestPrescriptionsParamName1: !GetAtt Parameters.Outputs.TestPrescriptionsParameterName1
+        TestPrescriptionsParamName2: !GetAtt Parameters.Outputs.TestPrescriptionsParameterName2
+        TestPrescriptionsParamName3: !GetAtt Parameters.Outputs.TestPrescriptionsParameterName3
+        TestPrescriptionsParamName4: !GetAtt Parameters.Outputs.TestPrescriptionsParameterName4
 
   StateMachines:
     Type: AWS::Serverless::Application

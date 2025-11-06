@@ -88,21 +88,17 @@ Parameters:
   EnableBackup:
     Type: String
 
-  TestPrescriptions1:
-    Type: String
-    Default: None
-  
-  TestPrescriptions2:
-    Type: String
-    Default: None
+  TestPrescriptionsParamName1:
+    Type: AWS::SSM::Parameter::Name<String>
 
-  TestPrescriptions3:
-    Type: String
-    Default: None
+  TestPrescriptionsParamName2:
+    Type: AWS::SSM::Parameter::Name<String>
 
-  TestPrescriptions4:
-    Type: String
-    Default: None
+  TestPrescriptionsParamName3:
+    Type: AWS::SSM::Parameter::Name<String>
+
+  TestPrescriptionsParamName4:
+    Type: AWS::SSM::Parameter::Name<String>
 
 Conditions:
   ShouldDeployCheckPrescriptionStatusUpdate: !Equals
@@ -132,11 +128,11 @@ Resources:
           ENABLE_NOTIFICATIONS_PARAM: !Ref EnableNotificationsInternalParam
           LOG_LEVEL: !Ref LogLevel
           ENVIRONMENT: !Ref Environment
-          TEST_PRESCRIPTIONS_1: !Ref TestPrescriptions1
-          TEST_PRESCRIPTIONS_2: !Ref TestPrescriptions2
-          TEST_PRESCRIPTIONS_3: !Ref TestPrescriptions3
-          TEST_PRESCRIPTIONS_4: !Ref TestPrescriptions4
           REQUIRE_APPLICATION_NAME: !Ref RequireApplicationName
+          TEST_PRESCRIPTIONS_PARAM_NAME_1: !Ref TestPrescriptionsParamName1
+          TEST_PRESCRIPTIONS_PARAM_NAME_2: !Ref TestPrescriptionsParamName2
+          TEST_PRESCRIPTIONS_PARAM_NAME_3: !Ref TestPrescriptionsParamName3
+          TEST_PRESCRIPTIONS_PARAM_NAME_4: !Ref TestPrescriptionsParamName4
     Metadata:
       BuildMethod: esbuild
       guard:

@@ -27,7 +27,8 @@
     "packages/nhsNotifyUpdateCallback",
     "packages/common/testing",
     "packages/common/middyErrorHandler",
-    "packages/common/commonTypes"
+    "packages/common/commonTypes",
+    "packages/common/utilities"
   ],
   "devDependencies": {
     "@types/aws-lambda": "^8.10.157",

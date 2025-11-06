@@ -1,8 +1,6 @@
 import {PSUDataItemWithPrevious} from "@psu-common/commonTypes"
-import {SSMProvider} from "@aws-lambda-powertools/parameters/ssm"
+import {initiatedSSMProvider} from "@psu-common/utilities"
 import {Logger} from "@aws-lambda-powertools/logger"
-
-const ssm = new SSMProvider()
 
 function str2set(value: string | undefined): Set<string> {
   const raw = value ?? ""
@@ -23,7 +21,7 @@ async function loadConfig(): Promise<{
     [process.env.ENABLED_SYSTEMS_PARAM!]: {maxAge: 5},
     [process.env.BLOCKED_SITE_ODS_CODES_PARAM!]: {maxAge: 5}
   }
-  const all = await ssm.getParametersByName(paramNames)
+  const all = await initiatedSSMProvider.getParametersByName(paramNames)
 
   const enabledSiteODSCodes = str2set(all[process.env.ENABLED_SITE_ODS_CODES_PARAM!] as string)
   const enabledSystems = str2set(all[process.env.ENABLED_SYSTEMS_PARAM!] as string)

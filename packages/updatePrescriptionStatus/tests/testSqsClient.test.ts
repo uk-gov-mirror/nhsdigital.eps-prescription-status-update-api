@@ -34,15 +34,14 @@ export const mockGetParametersByName = jest.fn(async () => {
     [process.env.BLOCKED_SITE_ODS_CODES_PARAM!]: "B3J1Z"
   }
 })
-jest.unstable_mockModule(
-  "@aws-lambda-powertools/parameters/ssm",
-  async () => ({
-    __esModule: true,
-    SSMProvider: jest.fn().mockImplementation(() => ({
-      getParametersByName: mockGetParametersByName
-    }))
-  })
-)
+
+const mockInitiatedSSMProvider = {
+  getParametersByName: mockGetParametersByName
+}
+
+jest.unstable_mockModule("@psu-common/utilities", async () => ({
+  initiatedSSMProvider: mockInitiatedSSMProvider
+}))
 
 const {
   pushPrescriptionToNotificationSQS,

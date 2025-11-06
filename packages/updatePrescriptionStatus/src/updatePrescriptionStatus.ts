@@ -3,7 +3,6 @@ import {APIGatewayProxyEvent, APIGatewayProxyResult} from "aws-lambda"
 import {Logger} from "@aws-lambda-powertools/logger"
 import {injectLambdaContext} from "@aws-lambda-powertools/logger/middleware"
 import {TransactionCanceledException} from "@aws-sdk/client-dynamodb"
-import {SSMProvider} from "@aws-lambda-powertools/parameters/ssm"
 
 import middy from "@middy/core"
 import inputOutputLogger from "@middy/input-output-logger"
@@ -25,36 +24,25 @@ import {
   conflictDuplicate,
   createSuccessResponseEntries,
   serverError,
-  timeoutResponse
+  timeoutResponse,
+  tooManyRequests
 } from "./utils/responses"
 import {
   InterceptionResult,
   testPrescription1Intercept,
   testPrescription2Intercept
 } from "./utils/testPrescriptionIntercept"
+import {getTestPrescriptions, initiatedSSMProvider} from "@psu-common/utilities"
 
 export const LAMBDA_TIMEOUT_MS = 9500
 // this is length of time from now when records in dynamodb will automatically be expired
 export const TTL_DELTA = 60 * 60 * 24 * 365 * 2 // Keep records for 2 years
 export const logger = new Logger({serviceName: "updatePrescriptionStatus"})
 
-// AEA-4317 (AEA-4365) - Env vars for INT test prescriptions
-const INT_ENVIRONMENT = process.env.ENVIRONMENT === "int"
-export const TEST_PRESCRIPTIONS_1 = (process.env.TEST_PRESCRIPTIONS_1 ?? "")
-  .split(",").map(item => item.trim()) || []
-export const TEST_PRESCRIPTIONS_2 = (process.env.TEST_PRESCRIPTIONS_2 ?? "")
-  .split(",").map(item => item.trim()) || []
-// AEA-5913 - Return 400
-export const TEST_PRESCRIPTIONS_3 = (process.env.TEST_PRESCRIPTIONS_3 ?? "")
-  .split(",").map(item => item.trim()) || []
-// AEA-5913 - Return 429
-export const TEST_PRESCRIPTIONS_4 = (process.env.TEST_PRESCRIPTIONS_4 ?? "")
-  .split(",").map(item => item.trim()) || []
-
 // Fetching the parameters from SSM using a dedicated provider, so that the values can be cached
 // and reused across invocations, reducing the number of calls to SSM.
 // (it was failing load tests using getParameter directly)
-const ssm = new SSMProvider()
+const ssm = initiatedSSMProvider
 
 async function loadConfig() {
   const paramNames = {
@@ -70,6 +58,34 @@ async function loadConfig() {
   return {
     enableNotifications: enableNotificationsValue === "true"
   }
+}
+
+// AEA-4317 AEA-4365 & AEA-5913 - Env vars for INT test prescriptions
+const INT_ENVIRONMENT = process.env.ENVIRONMENT === "int"
+// Using lazy initialization to avoid top-level await issues with Jest mocking
+export let TEST_PRESCRIPTIONS_1: Array<string> = []
+export let TEST_PRESCRIPTIONS_2: Array<string> = []
+export let TEST_PRESCRIPTIONS_3: Array<string> = []
+export let TEST_PRESCRIPTIONS_4: Array<string> = []
+
+let testPrescriptionsLoaded = false
+async function loadTestPrescriptions() {
+  if (!testPrescriptionsLoaded) {
+    TEST_PRESCRIPTIONS_1 = await getTestPrescriptions("TEST_PRESCRIPTIONS_PARAM_1")
+    TEST_PRESCRIPTIONS_2 = await getTestPrescriptions("TEST_PRESCRIPTIONS_PARAM_2")
+    TEST_PRESCRIPTIONS_3 = await getTestPrescriptions("TEST_PRESCRIPTIONS_PARAM_3")
+    TEST_PRESCRIPTIONS_4 = await getTestPrescriptions("TEST_PRESCRIPTIONS_PARAM_4")
+    testPrescriptionsLoaded = true
+  }
+}
+
+// Export for testing purposes - allows tests to reset the loaded state
+export function resetTestPrescriptions() {
+  testPrescriptionsLoaded = false
+  TEST_PRESCRIPTIONS_1 = []
+  TEST_PRESCRIPTIONS_2 = []
+  TEST_PRESCRIPTIONS_3 = []
+  TEST_PRESCRIPTIONS_4 = []
 }
 
 const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
@@ -135,6 +151,8 @@ const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPro
   let testPrescription1Forced201 = false
   let testPrescriptionForcedError = false
   if (INT_ENVIRONMENT) {
+    logger.info("INT environment detected, checking for test prescription interceptions.")
+    await loadTestPrescriptions()
     let interceptionResponse: InterceptionResult = {}
     const prescriptionIDs = dataItems.map((item) => item.PrescriptionID)
     const taskIDs = dataItems.map((item) => item.TaskID)
@@ -159,7 +177,7 @@ const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPro
     const isTestPrescription3 = testPrescription3Index !== -1
     if (isTestPrescription3) {
       logger.info("Forcing error for INT test prescription. Simulating failure to write to database.")
-      responseEntries = [serverError()]
+      responseEntries = [badRequest(`Simulated failure to write to database for test prescription.`)]
       return response(400, responseEntries)
     }
 
@@ -167,7 +185,7 @@ const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPro
     const isTestPrescription4 = testPrescription4Index !== -1
     if (isTestPrescription4) {
       logger.info("Forcing error for INT test prescription. Simulating PSU capacity failure.")
-      responseEntries = [serverError()]
+      responseEntries = [tooManyRequests()]
       return response(429, responseEntries)
     }
 

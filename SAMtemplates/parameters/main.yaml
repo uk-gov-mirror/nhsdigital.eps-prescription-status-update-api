@@ -39,6 +39,18 @@ Parameters:
   NotifyAPIBaseURLValue:
     Type: String
     Default: " "
+  
+  TestPresciptionsParamValue1:
+    Type: String
+
+  TestPresciptionsParamValue2:
+    Type: String
+
+  TestPresciptionsParamValue3:
+    Type: String
+
+  TestPresciptionsParamValue4:
+    Type: String
 
 Resources:
   EnabledSiteODSCodesParameter:
@@ -97,6 +109,38 @@ Resources:
       Type: String
       Value: !Ref EnableNotificationsInternalValue
 
+  TestPrescriptionsParameter1:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub ${StackName}-TEST_PRESCRIPTIONS_1
+      Description: "Toggle the notifications integration entirely"
+      Type: String
+      Value: !Ref TestPresciptionsParamValue1
+
+  TestPrescriptionsParameter2:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub ${StackName}-TEST_PRESCRIPTIONS_2
+      Description: "Toggle the notifications integration entirely"
+      Type: String
+      Value: !Ref TestPresciptionsParamValue2
+
+  TestPrescriptionsParameter3:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub ${StackName}-TEST_PRESCRIPTIONS_3
+      Description: "Toggle the notifications integration entirely"
+      Type: String
+      Value: !Ref TestPresciptionsParamValue3
+
+  TestPrescriptionsParameter4:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub ${StackName}-TEST_PRESCRIPTIONS_4
+      Description: "Toggle the notifications integration entirely"
+      Type: String
+      Value: !Ref TestPresciptionsParamValue4
+
   GetNotificationsParameterPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
@@ -116,6 +160,10 @@ Resources:
               - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${StackName}-PSUNotifyApiBaseUrl
               - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${StackName}-EnableNotificationsExternal
               - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${StackName}-EnableNotificationsInternal
+              - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${StackName}-TestPrescriptionsParameter1
+              - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${StackName}-TestPrescriptionsParameter2
+              - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${StackName}-TestPrescriptionsParameter3
+              - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${StackName}-TestPrescriptionsParameter4
 
 
 Outputs:
@@ -166,3 +214,27 @@ Outputs:
     Value: !Ref GetNotificationsParameterPolicy
     Export:
       Name: !Sub ${StackName}-GetNotificationsParameterPolicy
+
+  TestPrescriptionsParameterName1:
+    Description: "Name of the SSM parameter holding test prescriptions 1"
+    Value: !Ref TestPrescriptionsParameter1
+    Export:
+      Name: !Sub ${StackName}-TestPrescriptionsParameterName1
+
+  TestPrescriptionsParameterName2:
+    Description: "Name of the SSM parameter holding test prescriptions 2"
+    Value: !Ref TestPrescriptionsParameter2
+    Export:
+      Name: !Sub ${StackName}-TestPrescriptionsParameterName2
+
+  TestPrescriptionsParameterName3:
+    Description: "Name of the SSM parameter holding test prescriptions 3"
+    Value: !Ref TestPrescriptionsParameter3
+    Export:
+      Name: !Sub ${StackName}-TestPrescriptionsParameterName3
+
+  TestPrescriptionsParameterName4:
+    Description: "Name of the SSM parameter holding test prescriptions 4"
+    Value: !Ref TestPrescriptionsParameter4
+    Export:
+      Name: !Sub ${StackName}-TestPrescriptionsParameterName4

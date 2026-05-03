@@ -10,7 +10,7 @@ Globals:
     MemorySize: 256
     Architectures:
       - x86_64
-    Runtime: nodejs20.x
+    Runtime: nodejs24.x
     Environment:
       Variables:
         NODE_OPTIONS: --enable-source-maps
@@ -263,7 +263,7 @@ Resources:
                         5,
                         !Split [
                           ":",
-                          Fn::ImportValue: account-resources:TrustStoreBucket,
+                          Fn::ImportValue: account-resources-cdk-uk:Bucket:TrustStoreBucket:Arn,
                         ],
                       ]
                     - "psu-sandbox-truststore.pem"

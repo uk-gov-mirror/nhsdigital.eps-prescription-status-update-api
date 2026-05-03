@@ -38,7 +38,7 @@ jobs:
 
   tag_release:
     needs: [quality_checks, get_commit_id, get_config_values]
-    uses: NHSDigital/eps-common-workflows/.github/workflows/tag-release-devcontainer.yml@b83cff6a2951a8a2951b8c00a7734edd0cc832d3
+    uses: NHSDigital/eps-common-workflows/.github/workflows/tag-release-devcontainer.yml@889349f9d93e4846a642f7973b7c26b180bec5aa
     permissions:
       id-token: write
       contents: write

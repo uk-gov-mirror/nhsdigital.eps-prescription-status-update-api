@@ -21,6 +21,6 @@
     "yaml": "^2.8.3"
   },
   "dependencies": {
-    "@redocly/cli": "^2.29.0"
+    "@redocly/cli": "^2.30.0"
   }
 }
